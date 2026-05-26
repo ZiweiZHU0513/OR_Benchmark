@@ -24,7 +24,10 @@ echo "Packing $DATA_DIR -> $ARCHIVE_PATH"
 tar -czf "$ARCHIVE_PATH" "$DATA_DIR"
 
 echo "Writing checksum -> $CHECKSUM_PATH"
-shasum -a 256 "$ARCHIVE_PATH" > "$CHECKSUM_PATH"
+(
+    cd "$OUT_DIR"
+    shasum -a 256 "${ARCHIVE_BASENAME}.tar.gz" > "${ARCHIVE_BASENAME}.tar.gz.sha256"
+)
 
 echo
 echo "Created release assets:"
