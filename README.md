@@ -128,6 +128,33 @@ The summary includes:
 2. Orgeval evaluation result tables
 3. Orgeval error analysis tables
 
+## Data Download
+
+The full [data](data) directory is distributed through GitHub Releases rather than tracked directly in git.
+
+You can download the packaged dataset from the release page [data-20260526](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/tag/data-20260526).
+
+1. Download the archive [or_benchmark_data_20260526.tar.gz](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz) and its checksum file [or_benchmark_data_20260526.tar.gz.sha256](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz.sha256).
+1. Optionally, download them with GitHub CLI from the repository root:
+
+```sh
+gh release download data-20260526 \
+  --pattern "or_benchmark_data_20260526.tar.gz" \
+  --pattern "or_benchmark_data_20260526.tar.gz.sha256"
+```
+
+1. Verify the checksum:
+
+```sh
+shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
+```
+
+1. Extract the archive at the repository root. The archive already contains the top-level `data/` directory:
+
+```sh
+tar -xzf or_benchmark_data_20260526.tar.gz
+```
+
 ## Environment Notes
 
 There are two practical environment notes for the current evaluation pipeline:
