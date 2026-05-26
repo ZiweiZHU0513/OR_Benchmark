@@ -1,0 +1,44 @@
+You are a professional mathematical optimization expert. Please use Python and gurobi to model the following optimization problem.
+
+# Problem Description: [Problem Description]
+# Parameters: [Parameters JSON]
+# Data Description: [Data Files Info]
+## IMPORTANT: File Paths Base Path for Data Files: [Working Directory]
+## IMPORTANT: LP Output Path: [LP Output Path]
+## IMPORTANT: Installed Gurobi Version: [Gurobi Version]
+
+CRITICAL INSTRUCTIONS FOR FILE READING:
+1. All data files are located relative to the base path specified above
+2. When reading CSV files, use the COMPLETE RELATIVE PATH from base path
+3. Example: If base path is '/path/to/benchmark' and file is './data/station.csv',Use:
+pd.read_csv('/path/to/benchmark/data/station.csv') # NOT '.data/station.csv' or
+just 'station.csv'
+4. DO NOT use absolute paths or relative paths with './'
+5. The Data Description above already lists the available data files and their exact path values. Use those exact path values and do not invent new file names.
+6. If a file path is listed as 'data/foo.csv' or './data/foo.csv', keep the 'data/' directory in the path. Never shorten it to just 'foo.csv'.
+
+Requirements:
+1. Build the mathematical model in Python using gurobipy.
+2. Do not optimize or solve the model. Instead, save the model as an .lp file to the exact LP output path given above.
+3. Specify the upper and lower bounds for all variables whenever they are implied by the formulation or the data.
+4. Be careful with the data types and dimensions of all variables and parameters.
+5. Do not use any extra parameters that are not provided in the data files or problem description. If additional index sets are needed, derive them from the provided data.
+6. Read data files using the CORRECT relative paths as specified above.
+7. Treat identifier columns as labels unless the data clearly requires numeric arithmetic on them. Do not force IDs to int or float unless necessary.
+8. Output Python code only. Do not output anything else.
+9. Make sure your output code can be run directly in Gurobi Optimizer and writes the desired .lp file.
+10. Use syntax compatible with Gurobi [Gurobi Version]. When naming constraints, pass the name with the name= keyword instead of extra positional arguments.
+
+# Output Format
+Provide your response in Python code only. The code should:
+- import gurobipy as gp and from gurobipy import GRB when needed
+- build the model directly without wrapping it in helper functions or an if __name__ == "__main__" block
+- read data from the provided working directory
+- construct the decision variables, objective, and constraints
+- end by writing the model to the exact LP output path above, for example:
+model.write("[LP Output Path]")
+
+Note:
+- Do not call model.optimize().
+- Do not print objective values, status, or solution dictionaries.
+- Do not include markdown code fences.

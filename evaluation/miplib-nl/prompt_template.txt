@@ -1,0 +1,51 @@
+You are a professional mathematical optimization expert. Please use Python and gurobi to solve the following
+optimization problem.
+# Problem Description: [Problem Description]
+# Parameters: [Parameters JSON]
+# Data Description: [Data Files Info]
+## IMPORTANT: File Paths Base Path for Data Files: [Working Directory]
+CRITICAL INSTRUCTIONS FOR FILE READING:
+1. All data files are located relative to the base path specified above
+2. When reading CSV files, use the COMPLETE RELATIVE PATH from base path
+3. Example: If base path is '/path/to/benchmark' and file is './data/station.csv',Use:
+pd.read_csv('/path/to/benchmark/data/station.csv') # NOT '.data/station.csv' or
+just 'station.csv'
+4. DO NOT use absolute paths or relative paths with './'
+Requirements:
+1. Formulate the mathematical model and write Python code to solve it.
+2. Use gurobi as the solver.
+3. Read data files using the CORRECT relative paths as specified above.
+4. print format: {”objective value”: float, ”variables”: dict, ”status”: str}
+# Output Format Provide your response in this EXACT structure: ## Python Implementation
+import gurobipy as gp
+from gurobipy import GRB
+# Create model
+model = gp.Model("optimization_problem")
+# Data Loading,reading data from data files
+# Decision variables
+# [Define variables based on mathematical model with proper types]
+# REMEMBER: Use INTEGER variables (GRB.INTEGER) when modeling countable
+quantities
+# Use CONTINUOUS (GRB.CONTINUOUS) only for inherently fractional quantities
+like time/weight
+# Objective function
+# [Set objective based on mathematical model]
+# Constraints
+# [Add constraints based on mathematical model]
+# Solve
+model.optimize()
+# Extract results(Must print the optimal_value)
+if model.Status == GRB.OPTIMAL:
+print(f"optimal_value = {model.ObjVal}")
+print(f"Just print the best solution: {model.objVal}")
+else:
+print(f"Optimization status: {model.Status}")
+if model.Status == GRB.INFEASIBLE:
+print("optimal_value = INFEASIBLE")
+elif model.Status == GRB.UNBOUNDED:
+print("optimal_value = UNBOUNDED")
+else:
+print("optimal_value = ERROR")
+Note: Avoid including executable code blocks like if name == ’ main ’: in your response. Write your
+code directly without wrapping it in functions. # Response: (Give your response here)
+

@@ -1,0 +1,14 @@
+.DS_Store
+.venv/
+.vscode/
+__pycache__/
+*.py[cod]
+*.so
+
+outputs/
+results/
+temp_code/
+temp_lp/
+failure/
+
+data/
