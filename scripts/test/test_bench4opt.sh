@@ -3,10 +3,10 @@
 set -euo pipefail
 set -x
 
-data_dir="${DATA_DIR:-data/bench4opt_mix_final}"
+data_dir="${DATA_DIR:-data/bench4opt}"
 model_name="${MODEL_NAME:-deepseek-v3-0324}"
 openai_api_key="${OPENAI_API_KEY:-your key}"
-openai_base_url="${OPENAI_BASE_URL:-https://api.uniapi.io/v1}"
+openai_base_url="${OPENAI_BASE_URL:-}"
 output_filename="${OUTPUT_FILENAME:-}"
 max_workers="${MAX_WORKERS:-32}"
 eval_workers="${EVAL_WORKERS:-1}"

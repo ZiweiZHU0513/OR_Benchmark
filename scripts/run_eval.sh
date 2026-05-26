@@ -9,7 +9,7 @@ cd "$REPO_ROOT"
 MODELS=${MODELS:-"deepseek-v3-0324 deepseek-v4-flash"}
 TARGETS=${TARGETS:-"nl4opt_solver optibench_solver miplib_solver miplib_orgeval bench4opt_orgeval"}
 OPENAI_API_KEY=${OPENAI_API_KEY:-}
-OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.uniapi.io/v1}
+OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
 CONDA_ENV=${CONDA_ENV:-}
 RESULT_ROOT=${RESULT_ROOT:-results}
 SUMMARY_ROOT=${SUMMARY_ROOT:-}

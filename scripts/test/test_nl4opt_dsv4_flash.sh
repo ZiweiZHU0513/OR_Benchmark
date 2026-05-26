@@ -8,7 +8,7 @@ split="test"
 use_vllm=false
 if [ $use_vllm = false ]; then
     model_name="deepseek-v4-pro"
-    openai_base_url="https://api.uniapi.io/v1"
+    openai_base_url=""
     openai_api_key="${OPENAI_API_KEY:-}"
     batch_size=32
 else

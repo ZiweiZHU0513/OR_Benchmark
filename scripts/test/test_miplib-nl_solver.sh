@@ -3,7 +3,7 @@
 set -x
 
 dataset_root="./data/miplib-nl"
-openai_base_url="https://api.uniapi.io/v1"
+openai_base_url=""
 openai_api_key="${OPENAI_API_KEY:-}"
 
 if [ -z "$openai_api_key" ]; then
