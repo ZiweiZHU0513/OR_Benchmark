@@ -38,6 +38,35 @@ If you use results derived from these datasets, cite the corresponding papers be
 5. Bench4Opt: Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
 6. The graph-theoretic structural evaluation used for the orgeval pipeline is closely related to Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
 
+## Data Download
+
+The full [data](data) directory is distributed through GitHub Releases rather than tracked directly in git.
+
+You can download the packaged dataset from the release page [data-20260526](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/tag/data-20260526).
+
+If you start from a fresh clone, run the following commands at the repository root:
+
+```sh
+gh release download data-20260526 \
+  --pattern "or_benchmark_data_20260526.tar.gz" \
+  --pattern "or_benchmark_data_20260526.tar.gz.sha256"
+shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
+tar -xzf or_benchmark_data_20260526.tar.gz
+```
+
+After extraction, your repository will contain the same top-level data layout expected by the evaluation scripts:
+
+```text
+data/
+  NL4OPT/
+  bench4opt/
+  miplib-nl/
+  miplib-nl_exclude_failure/
+  optibench/
+```
+
+The archive already contains the top-level `data/` directory, so you should extract it at the repository root rather than inside an existing `data/` subdirectory.
+
 ## Recommended Entry Point
 
 If you want a single script that runs the entire suite, use:
@@ -128,33 +157,6 @@ The summary includes:
 2. Orgeval evaluation result tables
 3. Orgeval error analysis tables
 
-## Data Download
-
-The full [data](data) directory is distributed through GitHub Releases rather than tracked directly in git.
-
-You can download the packaged dataset from the release page [data-20260526](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/tag/data-20260526).
-
-1. Download the archive [or_benchmark_data_20260526.tar.gz](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz) and its checksum file [or_benchmark_data_20260526.tar.gz.sha256](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz.sha256).
-1. Optionally, download them with GitHub CLI from the repository root:
-
-```sh
-gh release download data-20260526 \
-  --pattern "or_benchmark_data_20260526.tar.gz" \
-  --pattern "or_benchmark_data_20260526.tar.gz.sha256"
-```
-
-1. Verify the checksum:
-
-```sh
-shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
-```
-
-1. Extract the archive at the repository root. The archive already contains the top-level `data/` directory:
-
-```sh
-tar -xzf or_benchmark_data_20260526.tar.gz
-```
-
 ## Environment Notes
 
 There are two practical environment notes for the current evaluation pipeline:
@@ -179,7 +181,7 @@ conda activate benchmarkOR
 
 The main directories relevant to benchmarking are:
 
-1. [data](data): raw benchmark data
+1. [data](data): raw benchmark data restored from the GitHub Release archive
 2. [evaluation](evaluation): dataset-specific evaluation entry points
 3. [scripts/test](scripts/test): recommended one-command test entry points
 4. [scripts/run_eval.sh](scripts/run_eval.sh): lower-level orchestration script
