@@ -47,11 +47,18 @@ You can download the packaged dataset from the release page [data-20260526](http
 If you start from a fresh clone, run the following commands at the repository root:
 
 ```sh
+curl -L -O https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz
+curl -L -O https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz.sha256
+shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
+tar -xzf or_benchmark_data_20260526.tar.gz
+```
+
+If GitHub CLI is available and `gh release download` works in your environment, you can use it as an alternative:
+
+```sh
 gh release download data-20260526 \
   --pattern "or_benchmark_data_20260526.tar.gz" \
   --pattern "or_benchmark_data_20260526.tar.gz.sha256"
-shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
-tar -xzf or_benchmark_data_20260526.tar.gz
 ```
 
 After extraction, your repository will contain the same top-level data layout expected by the evaluation scripts:
