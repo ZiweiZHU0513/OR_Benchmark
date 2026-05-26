@@ -14,4 +14,4 @@ failure/
 data/
 release_assets/
 
-
+scripts/package_data_release.sh
