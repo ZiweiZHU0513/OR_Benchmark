@@ -10,7 +10,7 @@ PROFILE=${PROFILE:-minimal}
 MODELS=${MODELS:-"deepseek-v4-flash"}
 OPENAI_API_KEY=${OPENAI_API_KEY:-}
 OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
-CONDA_ENV=${CONDA_ENV:-myenv}
+CONDA_ENV=${CONDA_ENV:-benchmarkOR}
 SUMMARY_TAG=${SUMMARY_TAG:-}
 SKIP_RUN=${SKIP_RUN:-false}
 SKIP_SUMMARY=${SKIP_SUMMARY:-false}
@@ -25,16 +25,16 @@ Usage:
   sh scripts/test/test_eval_suite.sh [options]
 
 Purpose:
-  One-command entry for testing the full benchmark pipeline across all five targets.
+    One-command entry for testing the full benchmark pipeline across all six targets.
 
 Profiles:
-  minimal   Run all five targets on a tiny slice: start=0, end=2, bench4opt_max_samples=2.
-  full      Run all five targets without slice limits.
+    minimal   Run all six targets on a tiny slice: start=0, end=2, bench4opt_max_samples=2.
+    full      Run all six targets without slice limits.
 
 Options:
   --profile minimal|full      Default: minimal
   --models MODEL [MODEL ...]  Default: deepseek-v4-flash
-  --conda_env ENV             Default: myenv
+    --conda_env ENV             Default: benchmarkOR
   --openai_api_key KEY        Optional; forwarded to scripts/run_eval_suite.sh
   --openai_base_url URL       Optional; forwarded to scripts/run_eval_suite.sh
   --summary_tag TAG           Optional summary directory name
@@ -169,7 +169,7 @@ case "$PROFILE" in
         ;;
 esac
 
-set -- sh scripts/run_eval_suite.sh \
+set -- sh scripts/run_eval.sh \
     --models
 
 for model_name in $MODELS; do
@@ -177,7 +177,7 @@ for model_name in $MODELS; do
 done
 
 set -- "$@" \
-    --targets nl4opt_solver optibench_solver miplib_solver miplib_orgeval bench4opt_orgeval \
+    --targets nl4opt_solver optibench_solver miplib_solver bench4opt_feasible_solver miplib_orgeval bench4opt_orgeval \
     --start "$START" \
     --summary_tag "$SUMMARY_TAG"
 

@@ -14,13 +14,16 @@ This split is useful for two reasons:
 
 ## Datasets and Evaluation Modes
 
-The current benchmark suite covers five targets:
+The current benchmark suite covers six targets:
 
 1. NL4OPT: solver evaluation
 2. OptiBench: solver evaluation
 3. MIPLIB-NL: solver evaluation
-4. MIPLIB-NL exclude failure: orgeval evaluation
-5. Bench4Opt: orgeval evaluation
+4. Bench4Opt feasible: solver evaluation
+5. MIPLIB-NL exclude failure: orgeval evaluation
+6. Bench4Opt: orgeval evaluation
+
+Bench4Opt feasible is a solver-evaluable subset derived from Bench4Opt. It contains instances that are feasible and can be compared by optimal value, so it is used for solver-based evaluation rather than LP-structure-only evaluation.
 
 In practice:
 
@@ -29,14 +32,13 @@ In practice:
 
 ## References
 
-If you use results derived from these datasets, cite the corresponding papers below.
+If you use results derived from these datasets or evaluation protocols, cite the corresponding sources below.
 
 1. NL4OPT: Rindranirina Ramamonjison, Timothy T. Yu, Raymond Li, Haley Li, Giuseppe Carenini, et al. (2023). [NL4Opt Competition: Formulating Optimization Problems Based on Their Natural Language Descriptions](http://arxiv.org/abs/2303.08233).
-2. OptiBench: Zhicheng Yang, Yiwei Wang, Yinya Huang, Zhijiang Guo, Wei Shi, et al. (2024). [OptiBench Meets ReSocratic: Measure and Improve LLMs for Optimization Modeling](http://arxiv.org/abs/2407.09887).
-3. MIPLIB-NL: Zhong Li, Hongliang Lu, Tao Wei, Wenyu Liu, Yuxuan Chen, et al. (2026). [Constructing Industrial-Scale Optimization Modeling Benchmark](http://arxiv.org/abs/2602.10450).
-4. MIPLIB-NL exclude failure: We excluded samples that not support ORGEval evaluation.
-5. Bench4Opt: Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
-6. The graph-theoretic structural evaluation used for the orgeval pipeline is closely related to Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
+1. OptiBench: Zhicheng Yang, Yiwei Wang, Yinya Huang, Zhijiang Guo, Wei Shi, et al. (2024). [OptiBench Meets ReSocratic: Measure and Improve LLMs for Optimization Modeling](http://arxiv.org/abs/2407.09887).
+1. Bench4Opt and Bench4Opt feasible: Bench4Opt feasible is a filtered feasible subset derived from Bench4Opt for solver-based optimal-value evaluation, not a separate source dataset. Please cite Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
+1. MIPLIB-NL and MIPLIB-NL exclude failure: MIPLIB-NL exclude failure is a filtered subset derived from MIPLIB-NL for orgeval. The underlying benchmark instances are based on the MIPLIB 2017 benchmark library. Please cite Zhong Li, Hongliang Lu, Tao Wei, Wenyu Liu, Yuxuan Chen, et al. (2026). [Constructing Industrial-Scale Optimization Modeling Benchmark](http://arxiv.org/abs/2602.10450).
+1. ORGEval methodology: the graph-theoretic structural evaluation used by the orgeval pipeline is related to Zhuohan Wang, Ziwei Zhu, Ziniu Li, Congliang Chen, Yu Han, et al. (2025). [ORGEval: Graph-Theoretic Evaluation of LLMs in Optimization Modeling](http://arxiv.org/abs/2510.27610).
 
 ## Data Download
 
@@ -67,6 +69,7 @@ After extraction, your repository will contain the same top-level data layout ex
 data/
   NL4OPT/
   bench4opt/
+  bench4opt_feasible/
   miplib-nl/
   miplib-nl_exclude_failure/
   optibench/
@@ -89,14 +92,14 @@ This script provides two presets:
 
 The `minimal` profile runs:
 
-1. NL4OPT / OptiBench / MIPLIB-NL / MIPLIB-NL-exclude-failure with `start=0, end=2`
+1. NL4OPT / OptiBench / MIPLIB-NL / Bench4Opt-feasible / MIPLIB-NL-exclude-failure with `start=0, end=2`
 2. Bench4Opt with `bench4opt_max_samples=2`
 
 It is useful for checking:
 
 1. Whether API calls work correctly
 2. Whether the environment dependencies are available
-3. Whether all five targets can run end to end
+3. Whether all six targets can run end to end
 4. Whether the summary can be generated successfully
 
 Example:
@@ -110,12 +113,12 @@ If the dependencies are not installed in the current environment, you can explic
 
 ```sh
 OPENAI_API_KEY=your_key OPENAI_BASE_URL=your_url \
-sh scripts/test/test_eval_suite.sh --profile minimal --conda_env vllm
+sh scripts/test/test_eval_suite.sh --profile minimal --conda_env benchmarkOR
 ```
 
 ### Full
 
-The `full` profile runs the same five targets without slice limits.
+The `full` profile runs the same six targets without slice limits.
 
 Example:
 
@@ -147,7 +150,7 @@ Raw results are written by default to:
 1. [results/nl4opt](results/nl4opt)
 2. [results/optibench](results/optibench)
 3. [results/miplib-nl](results/miplib-nl)
-4. [results/bench4opt](results/bench4opt)
+4. [results/bench4opt](results/bench4opt): Bench4Opt feasible solver results are written as `*_solver.json`, and Bench4Opt orgeval results are written as `*_orgeval.json`
 
 Summaries are written by default to:
 
@@ -193,3 +196,12 @@ The main directories relevant to benchmarking are:
 3. [scripts/test](scripts/test): recommended one-command test entry points
 4. [scripts/run_eval.sh](scripts/run_eval.sh): lower-level orchestration script
 5. [results](results): raw outputs and summary outputs
+
+Inside [data](data), the main benchmark subdirectories are:
+
+1. [data/NL4OPT](data/NL4OPT): NL4OPT solver benchmark data
+2. [data/optibench](data/optibench): OptiBench solver benchmark data
+3. [data/miplib-nl](data/miplib-nl): MIPLIB-NL solver benchmark data
+4. [data/bench4opt_feasible](data/bench4opt_feasible): feasible Bench4Opt subset used for solver-based optimal-value evaluation
+5. [data/miplib-nl_exclude_failure](data/miplib-nl_exclude_failure): MIPLIB-NL subset used for orgeval
+6. [data/bench4opt](data/bench4opt): Bench4Opt data used for orgeval

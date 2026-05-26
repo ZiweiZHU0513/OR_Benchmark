@@ -7,10 +7,10 @@ REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 cd "$REPO_ROOT"
 
 MODELS=${MODELS:-"deepseek-v3-0324 deepseek-v4-flash"}
-TARGETS=${TARGETS:-"nl4opt_solver optibench_solver miplib_solver miplib_orgeval bench4opt_orgeval"}
+TARGETS=${TARGETS:-"nl4opt_solver optibench_solver miplib_solver bench4opt_feasible_solver miplib_orgeval bench4opt_orgeval"}
 OPENAI_API_KEY=${OPENAI_API_KEY:-}
 OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
-CONDA_ENV=${CONDA_ENV:-}
+CONDA_ENV=${CONDA_ENV:-benchmarkOR}
 RESULT_ROOT=${RESULT_ROOT:-results}
 SUMMARY_ROOT=${SUMMARY_ROOT:-}
 SUMMARY_TAG=${SUMMARY_TAG:-}
@@ -27,6 +27,7 @@ MIPLIB_SOLVER_DATASET=${MIPLIB_SOLVER_DATASET:-data/miplib-nl}
 MIPLIB_ORGEVAL_DATASET=${MIPLIB_ORGEVAL_DATASET:-data/miplib-nl_exclude_failure}
 MIPLIB_SOLVER_SAVE_EVERY=${MIPLIB_SOLVER_SAVE_EVERY:-8}
 BENCH4OPT_DATASET=${BENCH4OPT_DATASET:-data/bench4opt}
+BENCH4OPT_FEASIBLE_DATASET=${BENCH4OPT_FEASIBLE_DATASET:-data/bench4opt_feasible}
 RERUN=${RERUN:-false}
 SKIP_RUN=${SKIP_RUN:-false}
 SKIP_SUMMARY=${SKIP_SUMMARY:-false}
@@ -39,7 +40,7 @@ FAILED_COMMANDS=0
 usage() {
     cat <<'EOF'
 Usage:
-  sh scripts/run_eval_suite.sh [options]
+    sh scripts/run_eval.sh [options]
 
 Recommended entry for daily use:
     sh scripts/test/test_eval_suite.sh --profile minimal
@@ -47,10 +48,10 @@ Recommended entry for daily use:
 
 Options:
   --models MODEL [MODEL ...]          Models to evaluate
-  --targets TARGET [TARGET ...]       Targets to run: nl4opt_solver optibench_solver miplib_solver miplib_orgeval bench4opt_orgeval
+    --targets TARGET [TARGET ...]       Targets to run: nl4opt_solver optibench_solver miplib_solver bench4opt_feasible_solver miplib_orgeval bench4opt_orgeval
   --openai_api_key KEY                API key
   --openai_base_url URL               Base URL
-  --conda_env ENV                     Optional conda env used for all python commands
+    --conda_env ENV                     Default: benchmarkOR
   --result_root DIR                   Raw result root, default: results
   --summary_root DIR                  Summary output root
   --summary_tag TAG                   Summary subdirectory name
@@ -66,6 +67,7 @@ Options:
   --miplib_solver_dataset PATH        Default: data/miplib-nl
   --miplib_orgeval_dataset PATH       Default: data/miplib-nl_exclude_failure
   --bench4opt_dataset PATH            Default: data/bench4opt
+    --bench4opt_feasible_dataset PATH   Default: data/bench4opt_feasible
   --rerun                             Force rerun for solver and miplib orgeval targets
   --skip_run                          Do not launch evaluations, only summarize existing results
   --skip_summary                      Do not generate summary after evaluation
@@ -75,7 +77,7 @@ Options:
   -h, --help                          Show this help
 
 Environment variable usage is also supported, e.g.:
-  OPENAI_API_KEY=... OPENAI_BASE_URL=... MODELS="deepseek-v3-0324 deepseek-v4-flash" sh scripts/run_eval_suite.sh
+    OPENAI_API_KEY=... OPENAI_BASE_URL=... MODELS="deepseek-v3-0324 deepseek-v4-flash" sh scripts/run_eval.sh
 EOF
 }
 
@@ -117,6 +119,9 @@ result_path_for_target() {
             ;;
         miplib_solver)
             printf '%s/miplib-nl/%s%s_solver.json' "$RESULT_ROOT" "$safe_model" "$slice_suffix"
+            ;;
+        bench4opt_feasible_solver)
+            printf '%s/bench4opt/%s%s_solver.json' "$RESULT_ROOT" "$safe_model" "$slice_suffix"
             ;;
         miplib_orgeval)
             printf '%s/miplib-nl/%s%s_orgeval.json' "$RESULT_ROOT" "$safe_model" "$slice_suffix"
@@ -265,6 +270,37 @@ run_miplib_solver() {
     run_command "miplib-nl solver / ${model_name}" "$@"
 }
 
+run_bench4opt_feasible_solver() {
+    model_name=$1
+    save_path=$2
+
+    set -- -m evaluation.bench4opt.run_evaluation_solver \
+        --data_dir "$BENCH4OPT_FEASIBLE_DATASET" \
+        --model_name "$model_name" \
+        --max_workers 32 \
+        --temperature "$TEMPERATURE" \
+        --top_p "$TOP_P" \
+        --max_tokens "$MAX_TOKENS" \
+        --seed "$SEED" \
+        --openai_api_key "$OPENAI_API_KEY" \
+        --openai_base_url "$OPENAI_BASE_URL" \
+        --start "$START" \
+        --timeout 360 \
+        --tolerance 1e-6 \
+        --save_every 32 \
+        --save_path "$save_path" \
+        --verbose "$VERBOSE"
+
+    if [ -n "$END" ]; then
+        set -- "$@" --end "$END"
+    fi
+    if is_true "$RERUN"; then
+        set -- "$@" --rerun
+    fi
+
+    run_command "bench4opt feasible solver / ${model_name}" "$@"
+}
+
 run_miplib_orgeval() {
     model_name=$1
     save_path=$2
@@ -321,7 +357,7 @@ run_bench4opt_orgeval() {
 }
 
 run_summary() {
-    set -- "$SCRIPT_DIR/run_eval_suite.py" --skip_run --result_root "$RESULT_ROOT"
+    set -- "$SCRIPT_DIR/run_eval.py" --skip_run --result_root "$RESULT_ROOT"
 
     if [ -n "$SUMMARY_ROOT" ]; then
         set -- "$@" --summary_root "$SUMMARY_ROOT"
@@ -344,7 +380,8 @@ run_summary() {
         --optibench_dataset "$OPTIBENCH_DATASET" \
         --miplib_solver_dataset "$MIPLIB_SOLVER_DATASET" \
         --miplib_orgeval_dataset "$MIPLIB_ORGEVAL_DATASET" \
-        --bench4opt_dataset "$BENCH4OPT_DATASET"
+        --bench4opt_dataset "$BENCH4OPT_DATASET" \
+        --bench4opt_feasible_dataset "$BENCH4OPT_FEASIBLE_DATASET"
 
     if is_true "$SKIP_MISSING_RESULTS"; then
         set -- "$@" --skip_missing_results
@@ -481,6 +518,10 @@ while [ $# -gt 0 ]; do
             BENCH4OPT_DATASET=$2
             shift 2
             ;;
+        --bench4opt_feasible_dataset)
+            BENCH4OPT_FEASIBLE_DATASET=$2
+            shift 2
+            ;;
         --rerun)
             RERUN=true
             shift
@@ -548,6 +589,9 @@ if ! is_true "$SKIP_RUN"; then
                     ;;
                 miplib_solver)
                     run_miplib_solver "$model_name" "$save_path"
+                    ;;
+                bench4opt_feasible_solver)
+                    run_bench4opt_feasible_solver "$model_name" "$save_path"
                     ;;
                 miplib_orgeval)
                     run_miplib_orgeval "$model_name" "$save_path"

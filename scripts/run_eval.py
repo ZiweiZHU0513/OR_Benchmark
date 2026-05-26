@@ -17,6 +17,7 @@ TARGET_ORDER = [
     "nl4opt_solver",
     "optibench_solver",
     "miplib_solver",
+    "bench4opt_feasible_solver",
     "miplib_orgeval",
     "bench4opt_orgeval",
 ]
@@ -56,6 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--miplib_solver_dataset", default="data/miplib-nl")
     parser.add_argument("--miplib_orgeval_dataset", default="data/miplib-nl_exclude_failure")
     parser.add_argument("--bench4opt_dataset", default="data/bench4opt")
+    parser.add_argument("--bench4opt_feasible_dataset", default="data/bench4opt_feasible")
     parser.add_argument("--skip_missing_results", action="store_true")
     parser.add_argument("--skip_run", action="store_true")
     return parser.parse_args()
@@ -79,6 +81,8 @@ def target_display_name(target_key: str, args: argparse.Namespace) -> str:
         return "optibench"
     if target_key == "miplib_solver":
         return "miplib-nl"
+    if target_key == "bench4opt_feasible_solver":
+        return Path(args.bench4opt_feasible_dataset).name.replace("_", "-")
     if target_key == "miplib_orgeval":
         return Path(args.miplib_orgeval_dataset).name.replace("_", "-")
     if target_key == "bench4opt_orgeval":
@@ -97,6 +101,8 @@ def result_path_for_target(target_key: str, model_name: str, args: argparse.Name
         return result_root / "optibench" / f"{safe_model}{slice_suffix}_solver.json"
     if target_key == "miplib_solver":
         return result_root / "miplib-nl" / f"{safe_model}{slice_suffix}_solver.json"
+    if target_key == "bench4opt_feasible_solver":
+        return result_root / "bench4opt" / f"{safe_model}{slice_suffix}_solver.json"
     if target_key == "miplib_orgeval":
         return result_root / "miplib-nl" / f"{safe_model}{slice_suffix}_orgeval.json"
     if target_key == "bench4opt_orgeval":
@@ -242,7 +248,7 @@ def format_percent(value: float) -> str:
 
 def build_solver_summary(result_map: Dict[str, Dict[str, List[Dict[str, Any]]]], args: argparse.Namespace) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
-    for target_key in ("nl4opt_solver", "optibench_solver", "miplib_solver"):
+    for target_key in ("nl4opt_solver", "optibench_solver", "miplib_solver", "bench4opt_feasible_solver"):
         if target_key not in result_map:
             continue
         dataset_name = target_display_name(target_key, args)
