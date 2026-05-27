@@ -46,13 +46,17 @@ The full [data](data) directory is distributed through GitHub Releases rather th
 
 You can download the packaged dataset from the release page [data-20260526](https://github.com/ZiweiZHU0513/OR_Benchmark/releases/tag/data-20260526).
 
-If you start from a fresh clone, run the following commands at the repository root:
+Recommended download method:
 
 ```sh
-curl -L -O https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz
-curl -L -O https://github.com/ZiweiZHU0513/OR_Benchmark/releases/download/data-20260526/or_benchmark_data_20260526.tar.gz.sha256
-shasum -a 256 -c or_benchmark_data_20260526.tar.gz.sha256
-tar -xzf or_benchmark_data_20260526.tar.gz
+sh scripts/download_data_release.sh
+```
+
+By default, this command extracts `data/` to the repository root.
+If you want `data/` to be created in your current working directory instead, run:
+
+```sh
+sh scripts/download_data_release.sh --output_dir .
 ```
 
 If GitHub CLI is available and `gh release download` works in your environment, you can use it as an alternative:
